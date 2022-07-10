@@ -16,14 +16,14 @@ const server = new ApolloServer({
   dataSources,
   context: async ({ req }) => {
     let user;
-    let errorMessage;
+    let errorMessage= '';
     const token = req.headers.authorization || '';
 
     try {
       const res = await UsersService.verify(token)
       user = res.data;
     } catch (e) {
-      errorMessage = e.message;
+      errorMessage = (e as unknown as { message: string }).message ;
     }
 
     return { user, errorMessage, token };
