@@ -23,14 +23,21 @@ export const genreSchema = gql`
     year: Int
   }
 
+  type Genres {
+    offset: Int
+    limit: Int
+    total: Int
+    items: [Genre]
+  }
+  
   type Query {
-    genres: [Genre]
+    genres(pagination: PaginatedRequest): Genres
     genre(id: ID!): Genre
   }
 
   type Mutation {
     updateGenre(id: ID!, genre: UpdateGenre): Genre
     createGenre(genre: CreateGenre): Genre
-    deleteGenre(id: ID!): Int
+    deleteGenre(id: ID!): Boolean
   }
 `;
