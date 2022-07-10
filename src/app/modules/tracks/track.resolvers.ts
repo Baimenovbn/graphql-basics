@@ -1,12 +1,20 @@
+import { authWrapper } from '../shared/helpers';
+
 export const trackResolvers = {
   Query: {
     tracks: (_, { pagination }, { dataSources }) => dataSources.tracksService.getAll(pagination),
     track: (_, { id }, { dataSources }) => dataSources.tracksService.getById(id),
   },
   Mutation: {
-    createTrack: (_, { track }, { dataSources }) => dataSources.tracksService.create(track),
-    updateTrack: (_, { id, track }, { dataSources }) => dataSources.tracksService.update(id, track),
-    deleteTrack: (_, { id}, { dataSources }) => dataSources.tracksService.remove(id)
+    createTrack: authWrapper(
+      (_, { track }, { dataSources }) => dataSources.tracksService.create(track)
+    ),
+    updateTrack: authWrapper(
+      (_, { id, track }, { dataSources }) => dataSources.tracksService.update(id, track)
+    ),
+    deleteTrack: authWrapper(
+      (_, { id}, { dataSources }) => dataSources.tracksService.remove(id)
+    ),
   },
   Track: {
     album: ({ albumId }, _, { dataSources }) => dataSources.albumsService.getById(albumId),
