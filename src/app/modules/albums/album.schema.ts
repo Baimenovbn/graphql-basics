@@ -4,20 +4,20 @@ export const albumSchema = gql`
   input CreateAlbum {
     name: String!
     released: Int
-    artistsIds: [String]
-    bandsIds: [String]
-    trackIds: [String]
-    genresIds: [String]
+    artistsIds: [ID!]
+    bandsIds: [ID!]
+    trackIds: [ID!]
+    genresIds: [ID!]
     image: String
   }
 
   input UpdateAlbum {
     name: String
     released: Int
-    artistsIds: [String]
-    bandsIds: [String]
-    trackIds: [String]
-    genresIds: [String]
+    artistsIds: [ID!]
+    bandsIds: [ID!]
+    trackIds: [ID!]
+    genresIds: [ID!]
     image: String
   }
 
@@ -32,14 +32,21 @@ export const albumSchema = gql`
     image: String
   }
 
+  type Albums {
+    offset: Int
+    limit: Int
+    total: Int
+    items: [Album]
+  }
+
   type Query {
-    albums: [Album]
+    albums(pagination: PaginatedRequest): Albums
     album(id: ID!): Album
   }
 
   type Mutation {
     updateAlbum(id: ID!, album: UpdateAlbum): Album
     createAlbum(album: CreateAlbum): Album
-    deleteAlbum(id: ID!): Int
+    deleteAlbum(id: ID!): Boolean
   }
 `;

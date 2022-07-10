@@ -1,26 +1,29 @@
-import { AlbumsService } from './albums.service';
+import { authWrapper } from '../shared/helpers';
 
 export const albumResolvers = {
   Query: {
-    async albums() {
-      return await AlbumsService.getAll();
-    },
-
-    album: async (parent, args) => {
-      return AlbumsService.getById(args.id);
-    },
+    albums: (_, { pagination }, { dataSources }) => dataSources.albumsService.getAll(pagination),
+    album: (_, { id  }, { dataSources }) => dataSources.albumsService.getById(id),
   },
   Mutation: {
-    createAlbum(parent, args) {
-      return AlbumsService.create(args.album);
-    },
-    updateAlbum(parent, args) {
-      const album = args.album;
-      const id = args.id;
-      return AlbumsService.update(id, album);
-    },
-    deleteAlbum(parent, args) {
-      return AlbumsService.delete(args.id);
-    }
-  }
+    createAlbum: authWrapper(
+      (_, { album }, { dataSources }) => dataSources.albumsService.create(album)
+    ),
+    updateAlbum: authWrapper(
+      (_, { id, album }, { dataSources }) => dataSources.albumsService.update(id, album)
+    ),
+    deleteAlbum: authWrapper(
+      (_, { id }, { dataSources }) => dataSources.albumsService.remove(id)
+    ),
+  },
+  Album: {
+    artists: ({ artistsIds }, _, { dataSources }) =>
+      artistsIds.map((id) => dataSources.artistsService.getById(id)),
+    bands: ({ bandsIds }, _, { dataSources }) =>
+      bandsIds.map((id) => dataSources.bandsService.getById(id)),
+    tracks: ({ trackIds }, _, { dataSources }) =>
+      trackIds.map((id) => dataSources.tracksService.getById(id)),
+    genres: ({ genresIds }, _, { dataSources }) =>
+      genresIds.map((id) => dataSources.genresService.getById(id)),
+  },
 }
