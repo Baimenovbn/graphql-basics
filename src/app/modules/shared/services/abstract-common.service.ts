@@ -5,6 +5,7 @@ import { URLResolver } from '../../../rests';
 import { ICommonResponse } from '../interfaces/common-response.interface';
 import { IPaginatedRequest } from '../interfaces/PaginatedRequest';
 import { toPlainObject } from '../helpers';
+import { DEFAULT_PAGINATE_PARAMS } from '../../../constants';
 
 export abstract class CommonService<Model, CreateModel extends object> extends RESTDataSource {
   constructor(microservice: EMicroservices) {
@@ -16,7 +17,8 @@ export abstract class CommonService<Model, CreateModel extends object> extends R
     request.headers.set('Authorization', this.context.token);
   }
 
-  getAll({ limit, offset }: IPaginatedRequest): Promise<ICommonResponse<Model>> {
+  getAll(pagination: IPaginatedRequest): Promise<ICommonResponse<Model>> {
+    const { limit, offset } = pagination || DEFAULT_PAGINATE_PARAMS;
     return this.get('', { limit, offset });
   }
 
