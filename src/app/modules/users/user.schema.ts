@@ -22,10 +22,10 @@ export const userSchema = gql`
 
   type Query {
     user(id: ID!): User
+    jwt(email: String!, password: String!): JWT
   }
 
   type Mutation {
     register(user: CreateUser): User
-    jwt(email: String!, password: String!): JWT
   }
 `;
