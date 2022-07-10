@@ -1,9 +1,10 @@
 import { RESTDataSource } from 'apollo-datasource-rest';
-import { Body } from 'apollo-datasource-rest/dist/RESTDataSource';
 
 import { EMicroservices } from '../../../constants/enums/microservices.enum';
 import { URLResolver } from '../../../rests';
 import { ICommonResponse } from '../interfaces/common-response.interface';
+import { IPaginatedRequest } from '../interfaces/PaginatedRequest';
+import { toPlainObject } from '../helpers';
 
 export abstract class CommonService<Model, CreateModel extends object> extends RESTDataSource {
   constructor(microservice: EMicroservices) {
@@ -15,24 +16,32 @@ export abstract class CommonService<Model, CreateModel extends object> extends R
     request.headers.set('Authorization', this.context.token);
   }
 
-  getAll(): Promise<ICommonResponse<Model>> {
-    return this.get('');
+  getAll({ limit, offset }: IPaginatedRequest): Promise<ICommonResponse<Model>> {
+    return this.get('', { limit, offset });
   }
 
-  getById(id: string) {
-    return this.get(id);
+  async getById(id: string) {
+    try {
+      return await this.get(id);
+    } catch (e) {
+      return null;
+    }
   }
 
   create(createData: CreateModel) {
-    const body = {...createData} as unknown as Body;
-    return this.post('', body);
+    return this.post('', toPlainObject(createData));
   }
 
-  remove(id: string) {
-    return this.delete(id);
+  async remove(id: string) {
+    try {
+      const res = await this.delete<{ deletedCount: number, acknowledged: boolean}>(id);
+      return res.acknowledged;
+    } catch (e) {
+      return false;
+    }
   }
 
   update(id: string, updateData: Partial<Model>) {
-    return this.put(id, updateData)
+    return this.put(id, toPlainObject(updateData))
   }
 }
