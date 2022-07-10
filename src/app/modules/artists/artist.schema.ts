@@ -8,7 +8,7 @@ export const artistSchema = gql`
     birthDate: String
     birthPlace: String
     country: String
-    bandsIds: [String]
+    bandsIds: [ID!]
     instruments: [String]
   }
 
@@ -19,12 +19,12 @@ export const artistSchema = gql`
     birthDate: String
     birthPlace: String
     country: String
-    bandsIds: [String]
+    bandsIds: [ID!]
     instruments: [String]
   }
 
   type Artist {
-    id: ID!
+    _id: ID!
     firstName: String
     secondName: String
     middleName: String
@@ -32,17 +32,24 @@ export const artistSchema = gql`
     birthPlace: String
     country: String
     bands: [Band]
-    instruments: String
+    instruments: [String]
+  }
+
+  type Artists {
+    offset: Int
+    limit: Int
+    total: Int
+    items: [Artist]
   }
 
   type Query {
-    artists: [Artist]
+    artists(pagination: PaginatedRequest): Artists
     artist(id: ID!): Artist
   }
-  
+
   type Mutation {
     createArtist(artist: CreateArtist): Artist
-    deleteArtist(id: ID!): Int
     updateArtist(id: ID!, artist: UpdateArtist): Artist
+    deleteArtist(id: ID!): Boolean
   }
 `;
