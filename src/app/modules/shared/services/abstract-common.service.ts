@@ -18,7 +18,11 @@ export abstract class CommonService<Model, CreateModel extends object> extends R
   }
 
   getAll(pagination: IPaginatedRequest): Promise<ICommonResponse<Model>> {
-    const { limit, offset } = pagination || DEFAULT_PAGINATE_PARAMS;
+    let { limit, offset } = pagination || DEFAULT_PAGINATE_PARAMS;
+
+    if (!limit) limit = DEFAULT_PAGINATE_PARAMS.limit;
+    if (!offset) offset = DEFAULT_PAGINATE_PARAMS.offset;
+
     return this.get('', { limit, offset });
   }
 
