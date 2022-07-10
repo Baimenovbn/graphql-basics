@@ -1,24 +1,17 @@
-import { TracksService } from './tracks.service';
-
 export const trackResolvers = {
   Query: {
-    tracks: async () => {
-      return TracksService.getAll();
-    },
-
-    track: async (parent, args) => {
-      return TracksService.getById(args.id);
-    },
+    tracks: (_, { pagination }, { dataSources }) => dataSources.tracksService.getAll(pagination),
+    track: (_, { id }, { dataSources }) => dataSources.tracksService.getById(id),
   },
   Mutation: {
-    createTrack(parent, args) {
-      return TracksService.create(args.track);
-    },
-    updateTrack(parent, args) {
-      return TracksService.update(args.id, args.track);
-    },
-    deleteTrack(parent, args) {
-      return TracksService.delete(args.id);
-    }
+    createTrack: (_, { track }, { dataSources }) => dataSources.tracksService.create(track),
+    updateTrack: (_, { id, track }, { dataSources }) => dataSources.tracksService.update(id, track),
+    deleteTrack: (_, { id}, { dataSources }) => dataSources.tracksService.remove(id)
+  },
+  Track: {
+    album: ({ albumId }, _, { dataSources }) => dataSources.albumsService.getById(albumId),
+    bands: ({ bandsIds }, _, { dataSources }) => bandsIds.map((id) => dataSources.bandsService.getById(id)),
+    artists: ({ artistsIds }, _, { dataSources }) => artistsIds.map((id) => dataSources.artistsService.getById(id)),
+    genres: ({ genresIds }, _, { dataSources }) => genresIds.map((id) => dataSources.genresService.getById(id)),
   }
 }

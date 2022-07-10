@@ -3,40 +3,49 @@ import { gql } from 'apollo-server';
 export const trackSchema = gql`
   input CreateTrack {
     title: String!
-    albumId: String
-    bandsIds: [String]
+    albumId: ID
+    bandsIds: [ID!]
+    artistsIds: [ID!]
     duration: Int
     released: Int
-    genresIds: [String]
+    genresIds: [ID!]
   }
   
   input UpdateTrack {
     title: String
-    albumId: String
-    bandsIds: [String]
+    albumId: ID
+    bandsIds: [ID!]
     duration: Int
     released: Int
-    genresIds: [String]
+    genresIds: [ID!]
   }
 
   type Track {
-    id: ID!
+    _id: ID!
     title: String!
-    albums: [Album]
+    album: Album
+    artists: [Artist]
     bands: [Band]
     duration: Int
     released: Int
     genres: [Genre]
   }
 
+  type Tracks {
+    offset: Int
+    limit: Int
+    total: Int
+    items: [Track]
+  }
+  
   type Query {
-    tracks: [Track]
+    tracks(pagination: PaginatedRequest): Tracks
     track(id: ID!): Track
   }
 
   type Mutation {
-    updateTrack(id: ID!, genre: UpdateTrack): Track
+    updateTrack(id: ID!, track: UpdateTrack): Track
     createTrack(track: CreateTrack): Track
-    deleteTrack(id: ID!): Int
+    deleteTrack(id: ID!): Boolean
   }
 `;
