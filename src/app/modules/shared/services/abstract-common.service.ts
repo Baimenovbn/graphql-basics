@@ -23,6 +23,8 @@ export abstract class CommonService<Model, CreateModel extends object> extends R
   }
 
   async getById(id: string) {
+    if (!id) return null;
+
     try {
       return await this.get(id);
     } catch (e) {
