@@ -4,43 +4,55 @@ export const bandSchema = gql`
   input CreateBand {
     name: String!
     origin: String
-    membersId: [String]
+    members: [MemberInput]
     website: String
-    genresIds: [String]
+    genresIds: [ID!]
   }
 
   input UpdateBand {
     name: String!
     origin: String
-    membersId: [String]
+    members: [MemberInput]
     website: String
-    genresIds: [String]
+    genresIds: [ID!]
   }
 
   type Member {
-    id: ID!
-    artist: Artist
+    artistId: ID!
     instrument: String
     years: [String]
   }
 
-  type Band {
-      id: ID!
-      name: String
-      origin: String
-      members: [Member]
-      website: String
-      genres: [Genre]
+  input MemberInput {
+    artistId: ID!
+    instrument: String!
+    years: [String!]!
   }
 
-  extend type Query {
-    bands: [Band]
+  type Band {
+    _id: ID!
+    name: String
+    origin: String
+    members: [Member]
+    website: String
+    genres: [Genre]
+  }
+
+  type Bands {
+    offset: Int
+    limit: Int
+    total: Int
+    items: [Band]
+  }
+  
+  type Query {
+    bands(pagination: PaginatedRequest): Bands
     band(id: ID!): Band
   }
 
   type Mutation {
     updateBand(id: ID!, genre: UpdateBand): Band
     createBand(band: CreateBand): Band
-    deleteBand(id: ID!): Int
+    deleteBand(id: ID!): Boolean
   }
 `;

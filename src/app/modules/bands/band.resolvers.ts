@@ -1,24 +1,25 @@
-import { BandsService } from './bands.service';
+import { authWrapper } from '../shared/helpers';
 
 export const bandResolvers = {
   Query: {
-    bands: async () => {
-      return BandsService.getAll();
-    },
-
-    band: async (parent, args) => {
-      return BandsService.getById(args.id);
-    },
+    bands: (_, { pagination }, { dataSources }) => dataSources.bandsService.getAll(pagination),
+    band: (_, { id }, { dataSources }) => dataSources.bandsService.getById(id),
   },
   Mutation: {
-    createBand(parent, args) {
-      return BandsService.create(args.band);
-    },
-    updateBand(parent, args) {
-      return BandsService.update(args.id, args.band);
-    },
-    deleteBand(parent, args) {
-      return BandsService.delete(args.id);
-    }
+    createBand: authWrapper(
+      (_, { band }, { dataSources }) => dataSources.bandsService.create(band)
+    ),
+    updateBand: authWrapper(
+      (_, { band, id }, { dataSources }) => dataSources.bandsService.update(id, band)
+    ),
+    deleteBand: authWrapper(
+      (_, { band, id }, { dataSources }) => dataSources.bandsService.remove(id)
+    )
+  },
+  Band: {
+    members: ({ members }, __, { dataSources }) =>
+      members.map((member) => dataSources.artistsService.getById(member.artistId))
+    ,
+    genres: ({ genresIds }, __, { dataSources }) => genresIds.map((id) => dataSources.genresService.getById(id)),
   }
 }
