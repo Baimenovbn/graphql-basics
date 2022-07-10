@@ -51,7 +51,7 @@ export const bandSchema = gql`
   }
 
   type Mutation {
-    updateBand(id: ID!, genre: UpdateBand): Band
+    updateBand(id: ID!, band: UpdateBand): Band
     createBand(band: CreateBand): Band
     deleteBand(id: ID!): Boolean
   }
