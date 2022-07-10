@@ -49,7 +49,13 @@ export abstract class CommonService<Model, CreateModel extends object> extends R
     }
   }
 
-  update(id: string, updateData: Partial<Model>) {
-    return this.put(id, toPlainObject(updateData))
+  async update(id: string, updateData: Partial<Model>) {
+    if (!id) return null;
+
+    try {
+      return await this.put(id, toPlainObject(updateData))
+    } catch (e) {
+      return null;
+    }
   }
 }
