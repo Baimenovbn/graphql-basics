@@ -5,6 +5,7 @@ import { favouriteSchema } from './favourites';
 import { genreSchema } from './genres';
 import { trackSchema } from './tracks';
 import { userSchema } from './users';
+import { sharedSchema } from './shared/shared.schema';
 
 export const typeDefs = [
   albumSchema,
@@ -14,4 +15,5 @@ export const typeDefs = [
   genreSchema,
   trackSchema,
   userSchema,
+  sharedSchema,
 ];
