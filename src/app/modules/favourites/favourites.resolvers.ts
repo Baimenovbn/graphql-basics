@@ -1,23 +1,34 @@
-import { FavouritesService } from './favourites.service';
+import { authWrapper } from '../shared/helpers';
+import { EAddToFavourites } from './enums/add-to-favourites.enum';
 
 export const favouritesResolvers = {
   Query: {
-    favourites() {
-      return FavouritesService.getAll();
-    }
+    favourites: authWrapper(
+      (_, __, { dataSources }) => dataSources.favouritesService.getAll()
+    )
   },
   Mutation: {
-    addTrackToFavourites(parent, args) {
-      return FavouritesService.addToFavourites(args.id,'tracks')
-    },
-    addBandToFavourites(parent, args) {
-      return FavouritesService.addToFavourites(args.id,'bands')
-    },
-    addArtistToFavourites(parent, args) {
-      return FavouritesService.addToFavourites(args.id,'artists')
-    },
-    addGenreToFavourites(parent, args) {
-      return FavouritesService.addToFavourites(args.id,'genres')
-    },
-  }
+    addTrackToFavourites: authWrapper(
+      (_, { id }, { dataSources }) => dataSources.favouritesService.addToFavourites(id, EAddToFavourites.tracks)
+    ),
+    addBandToFavourites: authWrapper(
+      (_, { id }, { dataSources }) => dataSources.favouritesService.addToFavourites(id, EAddToFavourites.bands)
+    ),
+    addArtistToFavourites: authWrapper(
+      (_, { id }, { dataSources }) => dataSources.favouritesService.addToFavourites(id, EAddToFavourites.artists)
+    ),
+    addGenreToFavourites: authWrapper(
+      (_, { id }, { dataSources }) => dataSources.favouritesService.addToFavourites(id, EAddToFavourites.genres)
+    ),
+  },
+  Favourites: {
+    artists: ({ artistsIds }, _, { dataSources }) =>
+      artistsIds.map((id) => dataSources.artistsService.getById(id)),
+    bands: ({ bandsIds }, _, { dataSources }) =>
+      bandsIds.map((id) => dataSources.bandsService.getById(id)),
+    tracks: ({ trackIds }, _, { dataSources }) =>
+      trackIds.map((id) => dataSources.tracksService.getById(id)),
+    genres: ({ genresIds }, _, { dataSources }) =>
+      genresIds.map((id) => dataSources.genresService.getById(id)),
+  },
 }

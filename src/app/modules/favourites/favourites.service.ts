@@ -1,23 +1,27 @@
-import axios from 'axios';
+import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest';
 
 import {URLResolver} from '../../rests';
 import {EMicroservices} from '../../constants/enums/microservices.enum';
+import { EAddToFavourites } from './enums/add-to-favourites.enum';
+import { ERemoveFromFavourites } from './enums/remove-from-favourites.enum';
 
-const baseURL = URLResolver(EMicroservices.FAVOURITES);
+export class FavouritesService extends RESTDataSource {
+  baseURL = URLResolver(EMicroservices.FAVOURITES);
 
-export type addFavourite = 'bands' | 'genres' | 'artists' | 'tracks';
-export type removeFavourite = 'band' | 'genre' | 'artist' | 'track';
-
-export class FavouritesService {
-  static async addToFavourites(id: string, type: addFavourite) {
-    return axios.put(baseURL + '/add', { id, type });
+  protected willSendRequest(request: RequestOptions & { user: any }) {
+    request.headers.set('authorization', this.context.token);
+    request.user = this.context.user;
   }
 
-  static async getAll() {
-    return axios.get(baseURL);
+  getAll() {
+    return this.get('');
   }
 
-  static async deleteFromFavourites(id: string, type: removeFavourite) {
-    return axios.put(baseURL + '/remove', { id, type });
+  addToFavourites(id: string, type: EAddToFavourites) {
+    return this.put('add', { id, type });
+  }
+
+  removeFromFavourites(id: string, type: ERemoveFromFavourites) {
+    return this.put('remove', { id, type });
   }
 }

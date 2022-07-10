@@ -1,13 +1,8 @@
 import { gql } from 'apollo-server';
 
 export const favouriteSchema = gql`
-  input AddToFavourites {
-    type: String
-    id: ID!
-  }
-
   type Favourites {
-    id: ID!
+    _id: ID!
     userId: ID
     bands: [Band]
     genres: [Genre]
@@ -16,13 +11,13 @@ export const favouriteSchema = gql`
   }
 
   type Query {
-    favourites: [Favourites]
+    favourites: Favourites
   }
 
   type Mutation {
-    addTrackToFavourites(addToFavourites: AddToFavourites): Favourites
-    addBandToFavourites(addToFavourites: AddToFavourites): Favourites
-    addArtistToFavourites(addToFavourites: AddToFavourites): Favourites
-    addGenreToFavourites(addToFavourites: AddToFavourites): Favourites
+    addTrackToFavourites(id: ID!): Favourites
+    addBandToFavourites(id: ID!): Favourites
+    addArtistToFavourites(id: ID!): Favourites
+    addGenreToFavourites(id: ID!): Favourites
   }
 `;
